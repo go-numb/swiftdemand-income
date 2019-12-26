@@ -55,7 +55,7 @@ func Income() error {
 	d := agouti.ChromeDriver(
 		agouti.ChromeOptions(
 			"args", []string{
-				// "--headless", // headlessモードの指定
+				"--headless", // headlessモードの指定
 				"--disable-gpu",
 				"--no-sandbox",
 				// User-Agentがないとheadless modeでjavascriptを起動できない
