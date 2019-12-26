@@ -22,26 +22,31 @@ func init() {
 
 	config.ID = id
 	config.Password = pass
+
+	log.Infof("%+v", config)
 }
 
 func main() {
 	ticker := time.NewTicker(24 * time.Hour)
 	defer ticker.Stop()
 
-	var err error
+	// 初回起動
+	err := Income()
+	if err != nil {
+		goto EXIT
+	}
 
 	for {
 		select {
 		case <-ticker.C:
 			err = Income()
 			if err != nil {
-				goto EXIT
+				log.Error(err)
 			}
 		}
 	}
 
 EXIT:
-
 	log.Fatal(err)
 }
 
@@ -50,9 +55,11 @@ func Income() error {
 	d := agouti.ChromeDriver(
 		agouti.ChromeOptions(
 			"args", []string{
-				"--headless", // headlessモードの指定
+				// "--headless", // headlessモードの指定
 				"--disable-gpu",
-				"no-sandbox",
+				"--no-sandbox",
+				// User-Agentがないとheadless modeでjavascriptを起動できない
+				`--user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.75 Safari/537.36"`,
 				"--window-size=1280,800", // ウィンドウサイズの指定
 			}),
 		agouti.Debug,
@@ -82,8 +89,10 @@ func Income() error {
 
 	time.Sleep(1 * time.Second)
 
-	if err := page.FindByLink("Claim").Click(); err != nil {
-		return err
+	if err := page.FindByName("commit").Submit(); err != nil {
+		if err := page.FindByXPath(`//*[@id="account"]/div[2]/div[1]/section/div/div[3]/input`).Click(); err != nil {
+			return err
+		}
 	}
 	time.Sleep(1 * time.Second)
 
