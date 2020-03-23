@@ -57,7 +57,7 @@ func Income() error {
 			"args", []string{
 				"--headless", // headlessモードの指定
 				"--disable-gpu",
-				"--no-sandbox",
+				"no-sandbox", // "--no-sandbox", // エラー報告記事: http://chromedriver.chromium.org/help/chrome-doesn-t-start
 				// User-Agentがないとheadless modeでjavascriptを起動できない
 				`--user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.75 Safari/537.36"`,
 				"--window-size=1280,800", // ウィンドウサイズの指定
